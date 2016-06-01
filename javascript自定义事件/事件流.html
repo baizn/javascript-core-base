@@ -1,0 +1,75 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<body style="margin: 0; padding: 0; text-align: center;">
+	<div id="divParent" style="width: 200px; height: 100px; background-color: #99FF33; margin: 8px auto;">
+		<div id="divChildA" style="width: 50px; height: 50px; background-color: #00CCCC; margin: 8px; float: left;">A</div>
+		<div id="divChildB" style="width: 50px; height: 50px; background-color: #CCCC00; margin: 8px; float: left;">B</div>
+		<div id="divChildC" style="width: 50px; height: 50px; background-color: #FFCC33; margin: 8px; float: left;">C</div>
+		Parent
+	</div>
+	<div id="showResult" style="width: 700px; text-align: left;"></div>
+	<script type="text/javascript">
+		//获取div元素的引用
+		var oBody = document.body,
+			divParent = document.getElementById('divParent'),
+			divA = document.getElementById('divChildA'),
+			divB = document.getElementById('divChildB'),
+			divC = document.getElementById('divChildC'),
+			divResult = document.getElementById('showResult');
+		//检测事件所处阶段
+		function checkPhase(evt) {
+			var phase;
+			//使用eventPhase属性可以获取事件所处阶段的信息
+			//低版本IE没有定义该属性
+			if(evt.eventPhase === 1) {
+				phase = '捕获阶段';
+			} else if(evt.eventPhase === 2) {
+				phase = '目标阶段';
+			} else if(evt.eventPhase === 3) {
+				phase = '冒泡阶段';
+			}
+			return phase;
+		};
+
+		var oBodyClick = function(evt) {
+			divResult.innerHTML += '[body]=' + checkPhase(evt) + '<br/>';
+			divResult.innerHTML += '[event.currentTarget]=' + evt.currentTarget.id + '<br/>';
+			divResult.innerHTML += '[event.target]=' + evt.target.id + '<br/>';
+			divResult.innerHTML += '-----------------------------------------------<br/>'
+		};
+
+		var divParentClick = function(evt) {
+			divResult.innerHTML += '[divParent]=' + checkPhase(evt) + '<br/>';
+			divResult.innerHTML += '[event.currentTarget]=' + evt.currentTarget.id + '<br/>';
+			divResult.innerHTML += '[event.target]=' + evt.target.id + '<br/>';
+			divResult.innerHTML += '-----------------------------------------------<br/>'
+		}
+
+		var divAClick = function(evt) {
+			divResult.innerHTML += '[divA]=' + checkPhase(evt) + '<br/>';
+			divResult.innerHTML += '[event.currentTarget]=' + evt.currentTarget.id + '<br/>';
+			divResult.innerHTML += '[event.target]=' + evt.target.id + '<br/>';
+			divResult.innerHTML += '-----------------------------------------------<br/>'
+		}
+
+		var divBClick = function(evt) {
+			divResult.innerHTML += '[divB]=' + checkPhase(evt) + '<br/>';
+			divResult.innerHTML += '[event.currentTarget]=' + evt.currentTarget.id + '<br/>';
+			divResult.innerHTML += '[event.target]=' + evt.target.id + '<br/>';
+			divResult.innerHTML += '-----------------------------------------------<br/>'
+		}
+
+		var divCClick = function(evt) {
+			divResult.innerHTML += '[divC]=' + checkPhase(evt) + '<br/>';
+			divResult.innerHTML += '[event.currentTarget]=' + evt.currentTarget.id + '<br/>';
+			divResult.innerHTML += '[event.target]=' + evt.target.id + '<br/>';
+			divResult.innerHTML += '-----------------------------------------------<br/>'
+		}
+
+		//addEventListener的第三个参数为false，表示允许冒泡，为true表示禁止冒泡
+		divA.addEventListener('click', divAClick, true);
+		//window.event.stopPropagation(); //取消冒泡阶段
+		//window.event.cancelBubble = true; //取消冒泡阶段
+		divParent.addEventListener('click', divParentClick, true);
+		oBody.addEventListener('click', oBodyClick, true);
+	</script>
+</body>

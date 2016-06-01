@@ -1,0 +1,104 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<body>
+	<button id="mybutton">Click</button>
+	<div style="background-color: darkgray; width:500px;height: 400px;" id="result"></div>
+
+	<p>
+		<input type="button" id="button1" value="触发alert事件" />
+	    <input type="button" id="button2" value="清除第一个alert" />
+	    <input type="button" id="button3" value="清除所有alert" />
+	</p>
+
+	<p>
+		<input type="button" id="button4" value="触发基于原型的自定义事件"/>
+		<input type="button" id="button5" value="触发基于[伪]DOM的自定义事件"/>
+		<input type="button" id="button6" value="删除基于[伪]DOM的自定义事件"/>
+	</p>
+	<script type="text/javascript" src="event.js"></script>
+	<script type="text/javascript">
+		var btn = document.getElementById('mybutton'),
+			result = document.getElementById('result');
+		function triggerDiv1() {
+			result.innerHTML += '触发了一次插件方式自定义事件' + '<br/>';
+		}
+
+		function triggerDiv2() {
+			result.innerHTML += '再次触发了插件方式自定义事件' + '<br/>';
+		}
+
+		//封装
+		div = $(btn);
+
+		//绑定两次回调，支持链式
+		div.add('customTrigger', triggerDiv1).add('customTrigger',  triggerDiv2);
+
+		btn.onclick = function() {
+			div.trigger('customTrigger');
+		}
+
+		var btn1 = document.getElementById('button1'),
+			btn2 = document.getElementById('button2'),
+			btn3 = document.getElementById('button3'),
+			fun1, fun2;
+		//添加自定义事件
+		Event.addEvent('objEvent', fun1 = function() {
+			result.innerHTML += '触发了一次字面量方式的自定义事件' + '<br/>';
+		}).addEvent('objEvent', fun2 = function() {
+			result.innerHTML += '再次触发了字面量方式的自定义事件' + '<br/>';
+		});
+
+		btn1.onclick = function() {
+			Event.triggerEvent('objEvent');
+		}
+
+		btn2.onclick = function() {
+			Event.removeEvent('objEvent', fun1);
+			result.innerHTML += '移除了字面量方式的自定义事件fun1' + '<br/>';
+		}
+
+		btn3.onclick = function() {
+			Event.removeEvent('objEvent');
+			result.innerHTML += '移除了所有字面量方式的自定义事件' + '<br/>';
+		}
+
+		var btn4 = document.getElementById('button4'),
+			proEvt = new EventTarget(),
+			onceFun;
+		proEvt.addEvents({
+			'once': function() {
+				result.innerHTML += 'once自定义事件只会触发一次' + '<br/>';
+				this.removeEvent('once');
+			},
+			'every': function() {
+				result.innerHTML += 'every自定义事件每次都会触发' + '<br/>';
+			}
+		});
+		btn4.onclick = function() {
+			proEvt.triggerEvents(['once', 'every']);
+		}
+
+		var fnClick = function(e) {
+			e = e || window.event;
+			var target = e.target || e.srcElement;
+			if(target.nodeType === 1) {
+				result.innerHTML += '点击类型：' + e.type + '<br/>';
+				$$(target).triggerEvent('show_result');
+			};
+		},
+		domFun1 = function() {
+			result.innerHTML += 'DOM自定义事件<br/>';
+		},
+		domFun2 = function() {
+			result.innerHTML += 'DOM自定义事件Again<br/>';
+		}
+
+		var btn5 = document.getElementById('button5');
+		$$(btn5).addEvent('click', fnClick).addEvent('show_result', domFun1).addEvent('show_result', domFun2);
+
+		var btn6 = document.getElementById('button6');
+		$$(btn6).addEvent('click', function() {
+			$$(btn5).removeEvent('show_result', domFun1).removeEvent('show_result', domFun2);
+			result.innerHTML += 'DOM自定义事件清除完成<br/>';
+		});
+	</script>
+</body>

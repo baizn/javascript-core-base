@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test</title>
+        <style type="text/css" >
+            html,body
+            {
+                height:100%;
+                width:100%;
+                padding:0;
+                margin:0;
+            }
+        
+            .dialog
+            {
+                position:fixed;
+                width:300px;
+                height:300px;
+                top:50%;
+                left:50%;
+                margin-top:-200px;
+                margin-left:-200px;
+                box-shadow:2px 2px 4px #ccc;
+                background-color:#f1f1f1;
+                z-index:30;
+                display:none;
+            }
+            
+            .dialog .title
+            {
+                font-size:16px;
+                font-weight:bold;
+                color:#fff;
+                padding:4px;
+                background-color:#404040;
+            }
+            
+            .dialog .close
+            {
+                width:20px;
+                height:20px;
+                margin:3px;
+                float:right;
+                cursor:pointer;
+            }
+            
+            .pageCover
+            {
+                width:100%;
+                height:100%;
+                position:absolute;
+                z-index:10;
+                background-color:#666;
+                opacity:0.5;
+                display:none;
+            }
+        </style>
+    </head>
+    <body>
+    <div id="pageCover" class="pageCover"></div>
+    
+    <input type="button" value="Dialog Test" onclick="openDialog();"/>
+    
+    <div id="dlgTest" class="dialog">
+        <img class="close" alt="" src="images/close.png">
+        <div class="title">Dialog</div>
+        <div class="content">
+        
+        </div>
+    </div>
+    
+    <script type="text/javascript">            
+        function EventTarget(){
+            this.handlers={};
+        }
+        
+        EventTarget.prototype={
+            constructor:EventTarget,
+            addHandler:function(type,handler){
+                if(typeof this.handlers[type]=='undefined'){
+                    this.handlers[type]=new Array();
+                }
+                this.handlers[type].push(handler);
+            },
+            removeHandler:function(type,handler){
+                if(this.handlers[type] instanceof Array){
+                    var handlers=this.handlers[type];
+                    for(var i=0,len=handlers.length;i<len;i++){
+                        if(handler[i]==handler){
+                            handlers.splice(i,1);
+                            break;
+                        }
+                    }
+                }
+            },
+            trigger:function(event){
+                if(!event.target){
+                    event.target=this;
+                }
+                if(this.handlers[event.type] instanceof Array){
+                    var handlers=this.handlers[event.type];
+                    for(var i=0,len=handlers.length;i<len;i++){
+                        handlers[i](event);
+                    }
+                }
+            }
+        }
+        </script>
+        
+    <script type="text/javascript">
+        function extend(subType,superType){
+            var prototype=Object(superType.prototype);
+            prototype.constructor=subType;
+            subType.prototype=prototype;
+        }
+    </script>
+    
+    <script type="text/javascript">
+        function Dialog(id){
+            EventTarget.call(this)
+            this.id=id;
+            var that=this;
+            document.getElementById(id).children[0].onclick=function(){
+                that.close();
+            }
+        }
+        
+        extend(Dialog,EventTarget);
+        
+        
+        Dialog.prototype.show=function(){
+            var dlg=document.getElementById(this.id);
+            dlg.style.display='block';
+            dlg=null;
+        }
+        
+        Dialog.prototype.close=function(){
+            var dlg=document.getElementById(this.id);
+            dlg.style.display='none';
+            dlg=null;
+            this.trigger({type:'close'});
+        }
+    </script>
+    
+    <script type="text/javascript">
+        function openDialog(){        
+            var dlg=new Dialog('dlgTest');
+            
+            dlg.addHandler('close',function(){
+                document.getElementById('pageCover').style.display='none';
+            });
+            
+            document.getElementById('pageCover').style.display='block';
+            dlg.show();
+        }
+    </script>
+    </body>
+<html>

@@ -1,0 +1,26 @@
+<body onmousemove="javascript: canmove(event);" id="bodyId">
+	<div id="myDiv" style="position: relative; width: 1000px; height: 700px;">
+		Flower Me!!!
+	</div>
+
+	<script type="text/javascript">
+		var x, y;
+		var oDiv = document.getElementById('myDiv');
+		function canmove(evt) {
+			var myEvent = window.event ? window.event : evt;
+			x = document.body.scrollLeft + myEvent.clientX;
+			y = document.body.scrollTop + myEvent.clientY;
+			/*oDiv.style.left = x + 'px';
+			oDiv.style.top = y + 'px';*/
+			oDiv.innerText = 'X=' + x + 'px;' + 'Y=' +  y + 'px';
+		}
+
+		function keyDownHandler(evt) {
+			if(evt.keyCode == 39) {
+				oDiv.innerText = evt.currentTarget.pageX;
+				evt.currentTarget.pageX = evt.currentTarget.pageX + 10;
+			}
+		}
+		document.getElementById('bodyId').addEventListener('keydown', keyDownHandler);
+	</script>
+</body>
